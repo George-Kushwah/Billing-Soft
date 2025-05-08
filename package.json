@@ -12,8 +12,18 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.75.5",
+    "axios": "^1.9.0",
+    "body-parser": "^2.2.0",
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql": "^2.18.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-error-boundary": "^6.0.0",
+    "react-router-dom": "^7.5.3",
+    "sass": "^1.87.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
