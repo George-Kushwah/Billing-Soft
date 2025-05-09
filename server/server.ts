@@ -2,10 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import bodyparser from 'body-parser';
 import mysql from 'mysql';
+import compression from 'compression';
 
 const port = 4500;
 
 const app = express();
+app.use(
+  compression({
+    level: 6,
+  }),
+);
 app.use(bodyparser.json());
 app.use(
   bodyparser.urlencoded({
