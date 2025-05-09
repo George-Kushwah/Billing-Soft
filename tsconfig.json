@@ -6,7 +6,7 @@
     "noEmit": true,
     "skipLibCheck": true,
     "useDefineForClassFields": true,
-
+    "types": ["node"],
     /* modules */
     "module": "ESNext",
     "isolatedModules": true,
@@ -19,5 +19,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src"]
+  "include": ["src", "/**/*.ts"],
+  "exclude": ["node_modules"]
 }
