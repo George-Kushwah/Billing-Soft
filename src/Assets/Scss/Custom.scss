@@ -12,3 +12,45 @@ body {
 @mixin bor($we) {
   border-radius: $we;
 }
+
+.login-bg {
+  background: url('./../Avtar/bbg.jpg') no-repeat;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  position: fixed;
+  display: flex;
+  .login-bg-inner {
+    align-self: center;
+    width: 100%;
+  }
+  .login-frm {
+    border-left: 1px $wht solid;
+    padding-left: 25px;
+    h4 {
+      color: #ebe8e8;
+      text-align: left;
+      margin-bottom: 20px;
+      margin-top: 15px;
+    }
+    .input-col {
+      margin-bottom: 15px;
+      color: $wht;
+      width: 50%;
+    }
+    .login-btn {
+      button {
+        text-transform: capitalize;
+        margin-right: 12px;
+        font-size: 15px;
+        &:nth-child(1) {
+          background: rgba(#000, 0.9);
+        }
+        &:nth-child(2) {
+          background: rgba(#06384a, 0.9);
+        }
+        margin-bottom: 25px;
+      }
+    }
+  }
+}

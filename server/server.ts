@@ -3,6 +3,7 @@ import cors from 'cors';
 import bodyparser from 'body-parser';
 import mysql from 'mysql';
 import compression from 'compression';
+const route = express.Router();
 
 const port = 4500;
 
@@ -27,6 +28,17 @@ app.use(
   }),
 );
 
+const logger = (req: any, res: any, next: any) => {
+  if (req.query.age < 18) {
+    res.send('Please enter vailid age');
+  } else {
+    console.log(req.method, req.url);
+    next();
+  }
+};
+
+route.use(logger);
+
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'roots',
@@ -38,6 +50,24 @@ connection.connect(function (err: any) {
   if (err) throw err;
   console.log('Connected!');
 });
+
+app.get('/gets', (req: any, res: any) => {
+  if (req) {
+    res.send('Hello world');
+  }
+});
+route.get('/about', (req: any, res: any) => {
+  if (req) {
+    res.send('Hello about world');
+  }
+});
+
+app.use((req: any, res: any, next: any) => {
+  res.status(404).json({ message: 'Route not found' });
+  next();
+});
+
+app.use('/', route);
 
 app.listen(port, () => {
   console.log(`Connecting Port is ${port}`);

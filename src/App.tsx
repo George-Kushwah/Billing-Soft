@@ -1,5 +1,13 @@
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+const Index = React.lazy(() => import('./Layout/Pages/Login/Index'));
+
 const App = () => {
-  return <>fdgdffdg</>;
+  return (
+    <>
+      <Index />
+    </>
+  );
 };
 
 export default App;
