@@ -64,7 +64,6 @@ route.get('/about', (req: any, res: any) => {
 
 app.use((req: any, res: any, next: any) => {
   res.status(404).json({ message: 'Route not found' });
-  next();
 });
 
 app.use('/', route);
