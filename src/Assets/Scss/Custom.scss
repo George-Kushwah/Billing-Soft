@@ -2,6 +2,7 @@
 $col1: #000;
 $imp: !important;
 $wht: #fff;
+$prim: #0c4d9c;
 body {
   margin: 0;
   padding: 0;
@@ -52,5 +53,34 @@ body {
         margin-bottom: 25px;
       }
     }
+  }
+  .company_logo {
+    h4 {
+      text-align: center;
+      color: $wht;
+    }
+  }
+}
+.Reg-model {
+  background: $wht;
+  padding: 20px;
+  width: 450px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  h6 {
+    font-size: 13px;
+  }
+  h3 {
+    font-size: 24px;
+    border-bottom: 1px rgba(#000, 0.3) solid;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    color: $prim;
+  }
+  button {
+    margin: 05px 5px 0 5px;
+    padding: 05px 10px;
   }
 }

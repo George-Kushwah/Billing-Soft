@@ -1,30 +1,31 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Grid,
   Typography,
   TextField,
   Button,
   InputAdornment,
-  Modal,
-  Box,
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+const Registration = React.lazy(() => import('./../Registration/Register'));
+
 const Index = () => {
   const [Mopen, setMopen] = React.useState<boolean>(false);
-
-  const HandleCloseRegistration = () => {
+  const HandleCloseRegistration = useCallback(() => {
     setMopen(false);
-  };
+  }, [Mopen]);
   return (
     <>
       <div className="login-bg">
         <div className="login-bg-inner">
-          <Grid container>
-            <Grid size={{ lg: 6 }}>sdssdfds</Grid>
+          <Grid container alignItems={'center'}>
+            <Grid size={{ lg: 6 }} className="company_logo">
+              <Typography variant="h4">Company Name</Typography>
+            </Grid>
             <Grid size={{ lg: 6 }} className="login-frm">
               <Typography variant="h4">
                 Admin Login <PeopleIcon />
@@ -134,20 +135,7 @@ const Index = () => {
           </Grid>
         </div>
       </div>
-      <Modal
-        open={Mopen}
-        onClose={HandleCloseRegistration}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-      >
-        <Button
-          sx={{ mt: 2 }}
-          variant="outlined"
-          onClick={HandleCloseRegistration}
-        >
-          Close
-        </Button>
-      </Modal>
+      <Registration mopen={Mopen} handleReg={HandleCloseRegistration} />
     </>
   );
 };
