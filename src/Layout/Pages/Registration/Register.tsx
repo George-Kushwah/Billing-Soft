@@ -76,15 +76,17 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
   };
 
   const onSubmit: SubmitHandler<IFromsdata> = (data) => {
-    let ds = Cryptojs.AES.encrypt(JSON.stringify(data), 'asasas').toString();
-    var bytes = Cryptojs.AES.decrypt(ds, 'asasas');
+    let ds = Cryptojs.AES.encrypt(
+      JSON.stringify(data),
+      `${process.env.REACT_APP_API_KEY}`,
+    ).toString();
+    var bytes = Cryptojs.AES.decrypt(ds, `${process.env.REACT_APP_API_KEY}`);
     var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
-    console.log(decryptedData);
+    console.log(decryptedData, ds);
   };
 
   return (
     <>
-      {process.env.REACT_APP_BASE_KEY}
       <Modal
         open={mopen}
         onClose={handleReg}
@@ -209,7 +211,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                   <Grid size={{ lg: 8 }}>
                     <TextField
                       size="small"
-                      type="text"
+                      type="password"
                       placeholder="Password"
                       className="input-col"
                       autoComplete="off"
@@ -254,7 +256,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                   <Grid size={{ lg: 8 }}>
                     <TextField
                       size="small"
-                      type="text"
+                      type="password"
                       placeholder="Password Confirm"
                       className="input-col"
                       {...register('cnfpassword', {
