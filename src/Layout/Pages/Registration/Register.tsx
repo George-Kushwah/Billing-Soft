@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import {
   Grid,
   Typography,
@@ -24,6 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
+import Cryptojs from 'crypto-js';
 interface IRegprops {
   mopen: boolean;
   handleReg: () => void;
@@ -34,7 +35,7 @@ interface IFromsdata {
   mobile: number | string;
   password: string;
   cnfpassword: string;
-  dob: Dayjs | null;
+  dob: Dayjs | string | null;
   role: string;
 }
 
@@ -58,22 +59,32 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     },
   });
 
-  const onSubmit: SubmitHandler<IFromsdata> = (data) => console.log(data);
-
   const ValidateDate = (val: any) => {
     if (!val) return 'date is Required';
     else {
-      let today = moment(new Date()).format('yyyy');
-      let date = moment(new Date(val)).format('yyyy');
-      console.log(parseInt(date) - parseInt(today));
+      let today: string = moment(new Date()).format('yyyy');
+      let date: string = moment(new Date(val)).format('yyyy');
       if (parseInt(today) - parseInt(date) >= 18) {
         return true;
       } else return false;
     }
   };
 
+  const HandleRole = (ev: any) => {
+    if (ev === '') return false;
+    else return true;
+  };
+
+  const onSubmit: SubmitHandler<IFromsdata> = (data) => {
+    let ds = Cryptojs.AES.encrypt(JSON.stringify(data), 'asasas').toString();
+    var bytes = Cryptojs.AES.decrypt(ds, 'asasas');
+    var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
+    console.log(decryptedData);
+  };
+
   return (
     <>
+      {process.env.REACT_APP_BASE_KEY}
       <Modal
         open={mopen}
         onClose={handleReg}
@@ -309,7 +320,9 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         />
                       )}
                     ></Controller>
-                    {errors?.dob && <p className="err-mes">Please Seect DOB</p>}
+                    {errors?.dob && (
+                      <p className="err-mes">Please select DOB 18+</p>
+                    )}
                   </Grid>
                   <Grid size={{ lg: 4 }}>
                     <Typography variant="h6">Role</Typography>
@@ -318,7 +331,10 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                     <Controller
                       name="role"
                       control={control}
-                      rules={{ required: true }}
+                      rules={{
+                        required: true,
+                        validate: (val: any) => HandleRole(val),
+                      }}
                       render={({ field }) => (
                         <FormControl
                           fullWidth
@@ -344,6 +360,9 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         </FormControl>
                       )}
                     ></Controller>
+                    {errors?.role && (
+                      <p className="err-mes">Please select User Role</p>
+                    )}
                   </Grid>
                   <Grid size={{ lg: 4 }}></Grid>
                   <Grid size={{ lg: 6 }}>
