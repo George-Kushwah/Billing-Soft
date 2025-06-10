@@ -47,6 +47,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm<IFromsdata>({
     defaultValues: {
@@ -59,18 +60,18 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     },
   });
 
-  const ValidateDate = (val: any) => {
+  const ValidateDate = (val: Dayjs | null) => {
     if (!val) return 'date is Required';
     else {
       let today: string = moment(new Date()).format('yyyy');
-      let date: string = moment(new Date(val)).format('yyyy');
+      let date: string = moment(new Date(val.toDate())).format('yyyy');
       if (parseInt(today) - parseInt(date) >= 18) {
         return true;
       } else return false;
     }
   };
 
-  const HandleRole = (ev: any) => {
+  const HandleRole = (ev: boolean | string) => {
     if (ev === '') return false;
     else return true;
   };
@@ -122,13 +123,13 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         },
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
-                            borderColor: errors?.username ? 'red' : '#000', // default border
+                            borderColor: errors?.username ? 'red' : '#000',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#999', // border on hover
+                            borderColor: '#999',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: errors?.username ? 'red' : '#000', // border on focus
+                            borderColor: errors?.username ? 'red' : '#000',
                           },
                         },
                       }}
@@ -171,13 +172,13 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         },
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
-                            borderColor: errors?.mobile ? 'red' : '#000', // default border
+                            borderColor: errors?.mobile ? 'red' : '#000',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#999', // border on hover
+                            borderColor: '#999',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: errors?.mobile ? 'red' : '#000', // border on focus
+                            borderColor: errors?.mobile ? 'red' : '#000',
                           },
                         },
                       }}
@@ -226,13 +227,13 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         },
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
-                            borderColor: '#000', // default border
+                            borderColor: errors?.cnfpassword ? 'red' : '#000',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#999', // border on hover
+                            borderColor: '#999',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: '#000', // border on focus
+                            borderColor: errors?.cnfpassword ? 'red' : '#000',
                           },
                         },
                       }}
@@ -272,13 +273,13 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                         },
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
-                            borderColor: '#000', // default border
+                            borderColor: errors?.cnfpassword ? 'red' : '#000',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#999', // border on hover
+                            borderColor: '#999',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: '#000', // border on focus
+                            borderColor: errors?.cnfpassword ? 'red' : '#000',
                           },
                         },
                       }}
@@ -308,7 +309,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       control={control}
                       rules={{
                         required: 'Please select an option',
-                        validate: (val: any) => ValidateDate(val),
+                        validate: (val: Dayjs | null) => ValidateDate(val),
                       }}
                       render={({ field }) => (
                         <DatePicker
@@ -316,6 +317,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                             width: '95%',
                           }}
                           label="Select Date"
+                          className={errors?.dob ? 'err-bor' : ''}
                           {...field}
                           minDate={dayjs().subtract(35, 'year')}
                           maxDate={dayjs().subtract(0, 'day')}
@@ -335,7 +337,8 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       control={control}
                       rules={{
                         required: true,
-                        validate: (val: any) => HandleRole(val),
+                        validate: (val: boolean | string): boolean =>
+                          HandleRole(val),
                       }}
                       render={({ field }) => (
                         <FormControl
@@ -344,7 +347,10 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                           variant="outlined"
                         >
                           <InputLabel id=""> Role</InputLabel>
-                          <Select {...field}>
+                          <Select
+                            {...field}
+                            className={errors?.dob ? 'err-bor' : ''}
+                          >
                             {role.map((item: string, ind: number) => (
                               <MenuItem
                                 key={ind}
@@ -382,7 +388,10 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       variant="contained"
                       color="error"
                       startIcon={<ClearIcon />}
-                      onClick={handleReg}
+                      onClick={() => {
+                        handleReg();
+                        reset();
+                      }}
                     >
                       Cancel
                     </Button>

@@ -91,6 +91,7 @@ body {
     padding: 03px 0;
   }
   .err-bor {
-    border: 2px red solid;
+    border: 1px red solid;
+    @include bor(7px);
   }
 }
