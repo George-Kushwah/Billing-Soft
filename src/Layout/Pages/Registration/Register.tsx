@@ -35,7 +35,7 @@ interface IFromsdata {
   mobile: number | string;
   password: string;
   cnfpassword: string;
-  dob: Dayjs | string | null;
+  dob: Dayjs | null;
   role: string;
 }
 
@@ -261,7 +261,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       className="input-col"
                       {...register('cnfpassword', {
                         required: true,
-                        validate: (value: any) =>
+                        validate: (value: string) =>
                           value === watch('password') || 'not match',
                       })}
                       sx={{
