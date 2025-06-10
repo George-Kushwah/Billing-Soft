@@ -84,4 +84,13 @@ body {
     margin: 05px 5px 0 5px;
     padding: 05px 10px;
   }
+  .err-mes {
+    color: red;
+    margin: 0;
+    font-size: 12px;
+    padding: 03px 0;
+  }
+  .err-bor {
+    border: 2px red solid;
+  }
 }
