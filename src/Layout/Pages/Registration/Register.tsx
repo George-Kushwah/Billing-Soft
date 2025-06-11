@@ -48,11 +48,12 @@ interface IFromsdata {
 
 const Register = ({ mopen, handleReg }: IRegprops) => {
   const role: string[] = ['User', 'Admin'];
-  const [err, setErr] = React.useState<string>('');
+  const [err, setErr] = React.useState<any>('');
+  const [check, setCheck] = React.useState<boolean>(true);
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
   });
-  const Mutation = Registeruser();
+  const Mutation: any = Registeruser();
   const {
     register,
     handleSubmit,
@@ -107,6 +108,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
           sameSite: 'Strict',
         });
         Mutation.mutate({ token: check?.data, payload: { data: datas } });
+        //await reset();
       }
     } catch (err: any) {
       setErr(err);

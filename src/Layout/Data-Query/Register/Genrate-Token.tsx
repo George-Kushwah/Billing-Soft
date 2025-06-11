@@ -25,13 +25,12 @@ const registerUsers = async (ev: any): Promise<void> => {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${ev.token?.data}`,
   };
-
   const users = await urls
     .post('Register-User', ev?.payload, {
       headers,
     })
-    .then((res) => console.log(res))
-    .catch((e) => console.log(e));
+    .then((res: any) => res)
+    .catch((err: any) => err.toJSON()?.message);
   return users;
 };
 
