@@ -25,6 +25,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import Cryptojs from 'crypto-js';
+import { GetToken } from './../../Data-Query/Register/Genrate-Token';
+import { useQueries } from '@tanstack/react-query';
+
 interface IRegprops {
   mopen: boolean;
   handleReg: () => void;
@@ -41,6 +44,9 @@ interface IFromsdata {
 
 const Register = ({ mopen, handleReg }: IRegprops) => {
   const role: string[] = ['User', 'Admin'];
+  const [getTokens]: any = useQueries({
+    queries: [GetToken()],
+  });
 
   const {
     register,
