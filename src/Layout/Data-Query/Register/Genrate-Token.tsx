@@ -1,9 +1,13 @@
-import { queryOptions, useMutation } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  UseMutationResult,
+} from '@tanstack/react-query';
 import Customaxios from '../../Axios/Axios-Interface';
 
 const urls = Customaxios(process.env.REACT_APP_BACKADN_URL);
 
-const GenrateNewToken = async () => {
+const GenrateNewToken = async (): Promise<void> => {
   try {
     const getToken = urls
       .get('Genrate/Token')
@@ -15,8 +19,20 @@ const GenrateNewToken = async () => {
   }
 };
 
-const registerUsers = async (ev: any) => {
-  console.log(ev);
+const registerUsers = async (ev: any): Promise<void> => {
+  const headers: any = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${ev.token?.data}`,
+  };
+
+  const users = urls
+    .post('Register-User', ev?.payload, {
+      headers,
+    })
+    .then((res) => console.log(res))
+    .catch((e) => console.log(e));
+  return users;
 };
 
 export function GetToken() {
@@ -27,9 +43,9 @@ export function GetToken() {
   });
 }
 
-export function Registeruser(data: any) {
+export const Registeruser = (): UseMutationResult<void, Error> => {
   return useMutation({
     mutationKey: ['Register'],
-    mutationFn: () => registerUsers(data),
+    mutationFn: registerUsers,
   });
-}
+};

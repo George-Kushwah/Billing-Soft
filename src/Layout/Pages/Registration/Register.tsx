@@ -25,8 +25,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import Cryptojs from 'crypto-js';
-import { GetToken } from './../../Data-Query/Register/Genrate-Token';
+import {
+  GetToken,
+  Registeruser,
+} from './../../Data-Query/Register/Genrate-Token';
 import { useQueries } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 
 interface IRegprops {
   mopen: boolean;
@@ -44,10 +48,11 @@ interface IFromsdata {
 
 const Register = ({ mopen, handleReg }: IRegprops) => {
   const role: string[] = ['User', 'Admin'];
+  const [err, setErr] = React.useState<string>('');
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
   });
-
+  const Mutation = Registeruser();
   const {
     register,
     handleSubmit,
@@ -83,20 +88,34 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     else return true;
   };
 
-  const onSubmit: SubmitHandler<IFromsdata> = (data) => {
-    let ds = Cryptojs.AES.encrypt(
-      JSON.stringify(data),
-      `${process.env.REACT_APP_API_KEY}`,
-    ).toString();
-    var bytes = Cryptojs.AES.decrypt(ds, `${process.env.REACT_APP_API_KEY}`);
-    //var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
-    getTokens.refetch();
-    if (
-      getTokens?.data !== undefined &&
-      getTokens?.data !== '' &&
-      getTokens.data.status === 200
-    ) {
-      console.log(getTokens.data.status);
+  const onSubmit: SubmitHandler<IFromsdata> = async (data) => {
+    try {
+      let datas = Cryptojs.AES.encrypt(
+        JSON.stringify(data),
+        `${process.env.REACT_APP_API_KEY}`,
+      ).toString();
+      // var bytes: any = Cryptojs.AES.decrypt(
+      //   ds,
+      //   `${process.env.REACT_APP_API_KEY}`,
+      // );
+      //var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
+      let check: any = await getTokens.refetch();
+      if (
+        check?.data !== undefined &&
+        check?.data?.data !== '' &&
+        check.data.status === 200
+      ) {
+        Cookies.set('token', `${check?.data?.data}`, {
+          expires: 1,
+          path: '/',
+          secure: false,
+          sameSite: 'Strict',
+        });
+        console.log(check?.data);
+        Mutation.mutate({ token: check?.data, payload: { data: datas } });
+      }
+    } catch (err: any) {
+      setErr(err);
     }
   };
 

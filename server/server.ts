@@ -5,7 +5,6 @@ import mysql from 'mysql';
 import compression from 'compression';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 import apicache from 'apicache';
 import { GenrateToken } from './jwt/jwt';
 import { ErrorHandler, Authcheck, Logger } from './middleware/middleware';
@@ -14,21 +13,20 @@ dotenv.config();
 const port = 4500;
 const app = express();
 let cache = apicache.middleware;
-app.use(cookieParser());
 app.use(
   bodyparser.urlencoded({
     extended: true,
   }),
   express.static('./dist/'),
 );
+app.use(bodyparser.json());
 app.use(express.static('./dist/'));
 app.use(
   cors({
+    origin: 'http://localhost:3001',
     Credential: true,
-    origin: '*',
   }),
 );
-app.use(bodyparser.json());
 app.use(
   compression({
     level: 6,
@@ -50,11 +48,6 @@ app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
   if (req) {
     const Token: string = GenrateToken();
     if (typeof Token === 'string') {
-      res.cookie('AuthToken', Token, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000,
-      });
-      console.log('web log');
       res.status(200).send(Token).end();
     }
   }
@@ -64,6 +57,7 @@ app.post('/Register-User', Authcheck, (req: any, res: any) => {
   if (req) {
     res.json({
       message: 'Protected content accessed!',
+      //fg: user,
     });
   }
 });
