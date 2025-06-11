@@ -4,11 +4,11 @@ import bodyparser from 'body-parser';
 import mysql from 'mysql';
 import compression from 'compression';
 import Cryptojs from 'crypto-js';
-import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import apicache from 'apicache';
 import { GenrateToken } from './jwt/jwt';
 import { ErrorHandler, Authcheck, Logger } from './middleware/middleware';
+import { RegisterUsers } from './query/qurey';
 
 dotenv.config();
 const port = 4500;
@@ -33,7 +33,7 @@ app.use(
     level: 6,
   }),
 );
-const connection = mysql.createConnection({
+export const connection = mysql.createConnection({
   host: 'localhost',
   user: 'roots',
   password: 'admin',
@@ -61,12 +61,7 @@ app.post('/Register-User', Authcheck, async (req: any, res: any) => {
       `${process.env.REACT_APP_API_KEY}`,
     );
     const decryptedData = JSON.parse(setcheck.toString(Cryptojs.enc.Utf8));
-    let newPassword = await bcrypt.hash(decryptedData?.cnfpassword, 10);
-    //console.log(newPassword);
-    res.json({
-      message: 'Protected content accessed!',
-      //fg: user,
-    });
+    return RegisterUsers(decryptedData, res);
   }
 });
 
