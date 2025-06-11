@@ -71,9 +71,10 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     else {
       let today: string = moment(new Date()).format('yyyy');
       let date: string = moment(new Date(val.toDate())).format('yyyy');
-      if (parseInt(today) - parseInt(date) >= 18) {
-        return true;
-      } else return false;
+      return true;
+      // if (parseInt(today) - parseInt(date) >= 18) {
+      //   return true;
+      // } else return false;
     }
   };
 
@@ -88,8 +89,15 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
       `${process.env.REACT_APP_API_KEY}`,
     ).toString();
     var bytes = Cryptojs.AES.decrypt(ds, `${process.env.REACT_APP_API_KEY}`);
-    var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
-    console.log(decryptedData, ds);
+    //var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
+    getTokens.refetch();
+    if (
+      getTokens?.data !== undefined &&
+      getTokens?.data !== '' &&
+      getTokens.data.status === 200
+    ) {
+      console.log(getTokens.data.status);
+    }
   };
 
   return (
@@ -385,6 +393,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       variant="contained"
                       type="submit"
                       startIcon={<ArrowForwardIosIcon />}
+                      disabled={getTokens?.isFetching}
                     >
                       Submit
                     </Button>

@@ -54,6 +54,7 @@ app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
         httpOnly: true,
         maxAge: 60 * 60 * 1000,
       });
+      console.log('web log');
       res.status(200).send(Token).end();
     }
   }
