@@ -94,11 +94,6 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
         JSON.stringify(data),
         `${process.env.REACT_APP_API_KEY}`,
       ).toString();
-      // var bytes: any = Cryptojs.AES.decrypt(
-      //   ds,
-      //   `${process.env.REACT_APP_API_KEY}`,
-      // );
-      //var decryptedData = JSON.parse(bytes.toString(Cryptojs.enc.Utf8));
       let check: any = await getTokens.refetch();
       if (
         check?.data !== undefined &&
@@ -111,7 +106,6 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
           secure: false,
           sameSite: 'Strict',
         });
-        console.log(check?.data);
         Mutation.mutate({ token: check?.data, payload: { data: datas } });
       }
     } catch (err: any) {

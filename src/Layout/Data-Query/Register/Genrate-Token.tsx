@@ -9,7 +9,7 @@ const urls = Customaxios(process.env.REACT_APP_BACKADN_URL);
 
 const GenrateNewToken = async (): Promise<void> => {
   try {
-    const getToken = urls
+    const getToken = await urls
       .get('Genrate/Token')
       .then((res: any) => res)
       .catch((err: any) => err.toJSON()?.message);
@@ -26,7 +26,7 @@ const registerUsers = async (ev: any): Promise<void> => {
     Authorization: `Bearer ${ev.token?.data}`,
   };
 
-  const users = urls
+  const users = await urls
     .post('Register-User', ev?.payload, {
       headers,
     })

@@ -3,6 +3,7 @@ import cors from 'cors';
 import bodyparser from 'body-parser';
 import mysql from 'mysql';
 import compression from 'compression';
+import Cryptojs from 'crypto-js';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import apicache from 'apicache';
@@ -53,8 +54,15 @@ app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
   }
 });
 
-app.post('/Register-User', Authcheck, (req: any, res: any) => {
+app.post('/Register-User', Authcheck, async (req: any, res: any) => {
   if (req) {
+    const setcheck: any = Cryptojs.AES.decrypt(
+      req?.body?.data,
+      `${process.env.REACT_APP_API_KEY}`,
+    );
+    const decryptedData = JSON.parse(setcheck.toString(Cryptojs.enc.Utf8));
+    let newPassword = await bcrypt.hash(decryptedData?.cnfpassword, 10);
+    //console.log(newPassword);
     res.json({
       message: 'Protected content accessed!',
       //fg: user,
