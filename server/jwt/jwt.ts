@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
+import moment from 'moment';
 dotenv.config();
 
 export interface AuthenticatedRequest extends Request {
@@ -12,15 +13,17 @@ type users = {
   company: string;
   location: string;
   expirein: string;
-  date: Date;
+  date: string;
+  role: string[];
 };
 
 export const Payloads: users = {
   id: Math.floor(Math.random() * 90000),
   company: 'senter',
   location: 'Agra',
-  date: new Date(),
+  date: moment(new Date()).format('MM/DD/YYYY'),
   expirein: '1h',
+  role: [],
 };
 
 export function GenrateToken() {
@@ -29,20 +32,3 @@ export function GenrateToken() {
   });
   return newToken;
 }
-
-export const verifyToken = (req: any, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res
-      .status(401)
-      .json({ message: 'Access Denied: No Token Provided' });
-  }
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, process.env.REACT_APP_JWT_KEY);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(403).json({ message: 'Invalid or Expired Token' });
-  }
-};

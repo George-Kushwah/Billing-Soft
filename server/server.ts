@@ -7,21 +7,14 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import apicache from 'apicache';
-import { GenrateToken, verifyToken } from './jwt/jwt';
-import { errorHandler } from './middleware/middleware';
+import { GenrateToken } from './jwt/jwt';
+import { ErrorHandler, Authcheck, Logger } from './middleware/middleware';
 
 dotenv.config();
-const route = express.Router();
 const port = 4500;
 const app = express();
 let cache = apicache.middleware;
-app.use(
-  compression({
-    level: 6,
-  }),
-);
 app.use(cookieParser());
-app.use(bodyparser.json());
 app.use(
   bodyparser.urlencoded({
     extended: true,
@@ -35,18 +28,23 @@ app.use(
     origin: '*',
   }),
 );
-
+app.use(bodyparser.json());
+app.use(
+  compression({
+    level: 6,
+  }),
+);
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'roots',
   password: 'admin',
   database: 'billing',
 });
-
 connection.connect(function (err: any) {
   if (err) throw err;
   console.log('Connected!');
 });
+app.use(Logger);
 
 app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
   if (req) {
@@ -61,7 +59,7 @@ app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
   }
 });
 
-app.post('/Register-User', verifyToken, (req: any, res: any) => {
+app.post('/Register-User', Authcheck, (req: any, res: any) => {
   if (req) {
     res.json({
       message: 'Protected content accessed!',
@@ -72,6 +70,8 @@ app.post('/Register-User', verifyToken, (req: any, res: any) => {
 app.use((req: any, res: any, next: any) => {
   res.status(404).json({ message: 'Route not found' });
 });
+
+app.use(ErrorHandler);
 
 app.listen(port, () => {
   console.log(`Connecting Port is ${port}`);
