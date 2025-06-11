@@ -3,16 +3,24 @@ import cors from 'cors';
 import bodyparser from 'body-parser';
 import mysql from 'mysql';
 import compression from 'compression';
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import apicache from 'apicache';
+import { GenrateToken, verifyToken } from './jwt/jwt';
+import { errorHandler } from './middleware/middleware';
+
+dotenv.config();
 const route = express.Router();
-
 const port = 4500;
-
 const app = express();
+let cache = apicache.middleware;
 app.use(
   compression({
     level: 6,
   }),
 );
+app.use(cookieParser());
 app.use(bodyparser.json());
 app.use(
   bodyparser.urlencoded({
@@ -28,17 +36,6 @@ app.use(
   }),
 );
 
-const logger = (req: any, res: any, next: any) => {
-  if (req.query.age < 18) {
-    res.send('Please enter vailid age');
-  } else {
-    console.log(req.method, req.url);
-    next();
-  }
-};
-
-route.use(logger);
-
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'roots',
@@ -51,22 +48,30 @@ connection.connect(function (err: any) {
   console.log('Connected!');
 });
 
-app.get('/gets', (req: any, res: any) => {
+app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
   if (req) {
-    res.send('Hello world');
+    const Token: string = GenrateToken();
+    if (typeof Token === 'string') {
+      res.cookie('AuthToken', Token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000,
+      });
+      res.status(200).send(Token).end();
+    }
   }
 });
-route.get('/about', (req: any, res: any) => {
+
+app.post('/Register-User', verifyToken, (req: any, res: any) => {
   if (req) {
-    res.send('Hello about world');
+    res.json({
+      message: 'Protected content accessed!',
+    });
   }
 });
 
 app.use((req: any, res: any, next: any) => {
   res.status(404).json({ message: 'Route not found' });
 });
-
-app.use('/', route);
 
 app.listen(port, () => {
   console.log(`Connecting Port is ${port}`);
