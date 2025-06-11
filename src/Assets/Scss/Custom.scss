@@ -94,4 +94,11 @@ body {
     border: 1px red solid;
     @include bor(7px);
   }
+  .user_create {
+    font-size: 14px;
+    color: #11822d;
+    font-weight: 500;
+    padding-left: 7px;
+    margin: 0;
+  }
 }

@@ -48,8 +48,6 @@ interface IFromsdata {
 
 const Register = ({ mopen, handleReg }: IRegprops) => {
   const role: string[] = ['User', 'Admin'];
-  const [err, setErr] = React.useState<any>('');
-  const [check, setCheck] = React.useState<boolean>(true);
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
   });
@@ -77,10 +75,9 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     else {
       let today: string = moment(new Date()).format('yyyy');
       let date: string = moment(new Date(val.toDate())).format('yyyy');
-      return true;
-      // if (parseInt(today) - parseInt(date) >= 18) {
-      //   return true;
-      // } else return false;
+      if (parseInt(today) - parseInt(date) >= 18) {
+        return true;
+      } else return false;
     }
   };
 
@@ -88,6 +85,13 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     if (ev === '') return false;
     else return true;
   };
+
+  React.useEffect(() => {
+    if (Mutation.isPending) {
+      reset();
+      handleReg();
+    }
+  }, [Mutation]);
 
   const onSubmit: SubmitHandler<IFromsdata> = async (data) => {
     try {
@@ -108,11 +112,8 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
           sameSite: 'Strict',
         });
         Mutation.mutate({ token: check?.data, payload: { data: datas } });
-        //await reset();
       }
-    } catch (err: any) {
-      setErr(err);
-    }
+    } catch {}
   };
 
   return (
@@ -403,12 +404,17 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                   </Grid>
                   <Grid size={{ lg: 4 }}></Grid>
                   <Grid size={{ lg: 6 }}>
+                    {Mutation.isPending ? (
+                      <p className="user_create">User Created</p>
+                    ) : (
+                      ''
+                    )}
                     <Button
                       sx={{ mt: 2 }}
                       variant="contained"
                       type="submit"
                       startIcon={<ArrowForwardIosIcon />}
-                      disabled={getTokens?.isFetching}
+                      disabled={Mutation?.isPending}
                     >
                       Submit
                     </Button>
