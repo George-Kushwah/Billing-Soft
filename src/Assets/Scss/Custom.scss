@@ -23,6 +23,22 @@ body {
     position: relative;
     top: -9px;
   }
+  .auth-err {
+    color: $wht;
+    margin: 0;
+    font-size: 14px;
+    padding: 03px 0;
+    position: relative;
+    top: -9px;
+    span {
+      font-size: 12px;
+    }
+    button {
+      position: absolute;
+      color: $wht;
+      top: -02px;
+    }
+  }
   background: url('./../Avtar/bbg.jpg') no-repeat;
   width: 100%;
   height: 100%;
@@ -48,6 +64,11 @@ body {
       width: 50%;
     }
     .login-btn {
+      .disable-btn {
+        &:disabled {
+          background: rgba(#000, 0.2);
+        }
+      }
       button {
         text-transform: capitalize;
         margin-right: 12px;

@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
@@ -19,6 +20,7 @@ import { useQueries } from '@tanstack/react-query';
 import { GetToken } from './../../Data-Query/Register/Genrate-Token';
 import { Cookiesget } from './../../Custom-Elements/Buttonclick';
 import { LoginUser } from './../../Data-Query/Login/Login-user';
+import ClearIcon from '@mui/icons-material/Clear';
 const Registration = React.lazy(() => import('./../Registration/Register'));
 
 interface ILoginProps {
@@ -29,6 +31,7 @@ interface ILoginProps {
 const Index = () => {
   const [Mopen, setMopen] = React.useState<boolean>(false);
   const [err, setErr] = useState<boolean>(false);
+  const [loginerr, setLoginerr] = useState<boolean>(false);
   const [errmess, setErrmess] = useState<string>('');
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
@@ -51,10 +54,23 @@ const Index = () => {
   });
 
   const LoginWith = (token: any, data: any) => {
-    loginUser.mutate({
-      token: token,
-      payload: { data: data },
-    });
+    return loginUser.mutate(
+      {
+        token: token,
+        payload: { data: data },
+      },
+      {
+        onSuccess: (data: any) => {
+          setLoginerr(false);
+          setErrmess('');
+          console.log(data, 'data');
+        },
+        onError: (err: any) => {
+          setLoginerr(true);
+          setErrmess(err?.response?.data?.message);
+        },
+      },
+    );
   };
 
   const onSubmit: SubmitHandler<ILoginProps> = async (data) => {
@@ -146,7 +162,9 @@ const Index = () => {
                     }}
                   />
                   {errors?.username && (
-                    <p className="err-mes">Name is Required</p>
+                    <p className="err-mes">
+                      Name is Required <br />
+                    </p>
                   )}
                 </Grid>
                 <Grid size={{ lg: 12 }}>
@@ -201,10 +219,42 @@ const Index = () => {
                   )}
                 </Grid>
                 <Grid size={{ lg: 12 }} className="login-btn">
+                  {err && (
+                    <p className="auth-err">
+                      Error with Authorization <br />
+                      <span>{errmess}</span>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => {
+                          setErr(false);
+                          setErrmess('');
+                        }}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </p>
+                  )}
+                  {loginerr && (
+                    <p className="auth-err">
+                      Error in Login <br />
+                      <span>{errmess}</span>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => {
+                          setLoginerr(false);
+                          setErrmess('');
+                        }}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </p>
+                  )}
                   <Button
                     type="submit"
                     variant="contained"
                     startIcon={<ArrowRightAltIcon />}
+                    disabled={err ? true : loginerr ? true : false}
+                    className="disable-btn"
                   >
                     Submit
                   </Button>
@@ -214,6 +264,9 @@ const Index = () => {
                     onClick={() => {
                       setMopen(true);
                       reset();
+                      setLoginerr(false);
+                      setErrmess('');
+                      setErr(false);
                     }}
                   >
                     Registration
