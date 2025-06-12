@@ -50,6 +50,7 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
   const [err, setErr] = useState<boolean>(false);
   const [errRegis, setErrRegis] = useState<boolean>(false);
   const [errmess, setErrmess] = useState<string>('');
+  const [usercreate, setUsercreate] = useState<boolean>(false);
   const role: string[] = ['User', 'Admin'];
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
@@ -112,7 +113,21 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
             token: check?.data,
             payload: { data: datas },
           },
+
           {
+            onSuccess: (succ: any) => {
+              if (
+                succ?.data?.message === 'Record update successfully' &&
+                !succ?.data?.error
+              ) {
+                setUsercreate(true);
+                reset();
+                setTimeout(() => {
+                  setUsercreate(false);
+                  handleReg();
+                }, 800);
+              }
+            },
             onError: (err: any) => {
               setErrRegis(true);
               setErrmess(err?.message);
@@ -471,11 +486,10 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
                       </Grid>
                       <Grid size={{ lg: 4 }}></Grid>
                       <Grid size={{ lg: 6 }}>
-                        {Mutation.isPending ? (
-                          <p className="user_create">User Created</p>
-                        ) : (
-                          ''
+                        {usercreate && (
+                          <p className="user_create">User is Created</p>
                         )}
+
                         <Button
                           sx={{ mt: 2 }}
                           variant="contained"

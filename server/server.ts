@@ -48,7 +48,7 @@ app.use(Logger);
 app.get('/Genrate/Token', (req: any, res: any) => {
   if (req) {
     const Token: string = GenrateToken();
-    if (typeof Token == 'string') {
+    if (typeof Token === 'string') {
       res.status(200).send(Token).end();
     } else res.status(400).send({ error: true, message: 'Bad Request' }).end();
   }
