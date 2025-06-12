@@ -3,27 +3,28 @@ import Customaxios from '../../Axios/Axios-Interface';
 
 const urls = Customaxios(process.env.REACT_APP_BACKADN_URL);
 
-const registerUsers = async (ev: any): Promise<void> => {
+const loginusers = async (ev: any): Promise<void> => {
+  console.log(ev);
   try {
     const headers: any = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${ev.token?.data}`,
+      Authorization: `Bearer ${ev?.token}`,
     };
-    const users = await urls
-      .post('Register-User', ev?.payload, {
+    const login = await urls
+      .post('Login-User', ev?.payload, {
         headers,
       })
       .then((res: any) => res);
-    return users;
+    return login;
   } catch (err: any) {
     return Promise.reject(err);
   }
 };
 
-export const Registeruser = (): UseMutationResult<void, Error> => {
+export const LoginUser = (): UseMutationResult<void, Error> => {
   return useMutation({
-    mutationKey: ['Register'],
-    mutationFn: registerUsers,
+    mutationKey: ['Login'],
+    mutationFn: loginusers,
   });
 };

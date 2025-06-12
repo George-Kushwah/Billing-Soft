@@ -44,3 +44,67 @@ export const RegisterUsers = async (data: any, res: any) => {
       .end();
   }
 };
+
+export const LoginUser = async (data: any, res: any) => {
+  try {
+    await connection.query(
+      `select * from users where name=?`,
+      [data?.username],
+      (err: any, result: any) => {
+        if (!err && result.length > 0) {
+          bcrypt.compare(
+            data?.password,
+            result[0]?.password,
+            (errs: any, results: any) => {
+              if (results) {
+                res
+                  .status(200)
+                  .send({
+                    error: false,
+                    data: [
+                      {
+                        name: result[0]?.name,
+                        role: result[0]?.permission,
+                        id: result[0]?.id,
+                      },
+                    ],
+                    status: 200,
+                  })
+                  .end();
+              } else
+                res
+                  .status(404)
+                  .send({
+                    message: 'Record not Found',
+                    data: [errs],
+                    error: true,
+                    status: 404,
+                  })
+                  .end();
+            },
+          );
+        } else {
+          res
+            .status(404)
+            .send({
+              message: 'Record not Found',
+              data: [null],
+              error: true,
+              status: 404,
+            })
+            .end();
+        }
+      },
+    );
+  } catch (error) {
+    res
+      .status(404)
+      .send({
+        message: 'Record not Found',
+        data: [null],
+        error: true,
+        status: 404,
+      })
+      .end();
+  }
+};

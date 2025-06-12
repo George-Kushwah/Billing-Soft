@@ -18,6 +18,7 @@ import Cookies from 'js-cookie';
 import { useQueries } from '@tanstack/react-query';
 import { GetToken } from './../../Data-Query/Register/Genrate-Token';
 import { Cookiesget } from './../../Custom-Elements/Buttonclick';
+import { LoginUser } from './../../Data-Query/Login/Login-user';
 const Registration = React.lazy(() => import('./../Registration/Register'));
 
 interface ILoginProps {
@@ -32,6 +33,7 @@ const Index = () => {
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
   });
+  const loginUser = LoginUser();
   const HandleCloseRegistration = useCallback(() => {
     setMopen(false);
   }, [Mopen]);
@@ -50,16 +52,27 @@ const Index = () => {
 
   const onSubmit: SubmitHandler<ILoginProps> = async (data) => {
     try {
+      let datas = Cryptojs.AES.encrypt(
+        JSON.stringify(data),
+        `${process.env.REACT_APP_API_KEY}`,
+      ).toString();
       const getcookies = Cookies.get('token');
       if (getcookies !== undefined && getcookies !== '') {
         const decoded: any = jwtDecode(getcookies);
         const expireDate: any = new Date(decoded?.exp * 1000);
         if (Date.now() >= expireDate) {
           Cookiesget(getTokens, setErr, setErrmess);
+          alert(1);
         } else {
+          console.log(getcookies);
+          loginUser.mutate({
+            token: getcookies,
+            payload: { data: datas },
+          });
         }
       } else {
         Cookiesget(getTokens, setErr, setErrmess);
+        alert(2);
       }
     } catch (err: any) {
       return err;
