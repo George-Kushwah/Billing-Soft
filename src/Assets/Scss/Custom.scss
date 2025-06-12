@@ -64,9 +64,12 @@ body {
       width: 50%;
     }
     .login-btn {
+      .fix-color {
+        background: rgba(#06384a, 0.9) !important;
+      }
       .disable-btn {
         &:disabled {
-          background: rgba(#000, 0.2);
+          background: rgba(#000, 0.2) !important;
         }
       }
       button {
@@ -77,7 +80,7 @@ body {
           background: rgba(#000, 0.9);
         }
         &:nth-child(2) {
-          background: rgba(#06384a, 0.9);
+          background: rgba(#06384a, 0.9) !important;
         }
         margin-bottom: 25px;
       }

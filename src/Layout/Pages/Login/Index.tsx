@@ -260,6 +260,7 @@ const Index = () => {
                   </Button>
                   <Button
                     variant="contained"
+                    className="fix-color"
                     startIcon={<GroupAddIcon />}
                     onClick={() => {
                       setMopen(true);
