@@ -50,6 +50,13 @@ const Index = () => {
     },
   });
 
+  const LoginWith = (token: any, data: any) => {
+    loginUser.mutate({
+      token: token,
+      payload: { data: data },
+    });
+  };
+
   const onSubmit: SubmitHandler<ILoginProps> = async (data) => {
     try {
       let datas = Cryptojs.AES.encrypt(
@@ -61,18 +68,16 @@ const Index = () => {
         const decoded: any = jwtDecode(getcookies);
         const expireDate: any = new Date(decoded?.exp * 1000);
         if (Date.now() >= expireDate) {
-          Cookiesget(getTokens, setErr, setErrmess);
-          alert(1);
+          await Cookiesget(getTokens, setErr, setErrmess);
+          const getCookies = Cookies.get('token');
+          LoginWith(getCookies, datas);
         } else {
-          console.log(getcookies);
-          loginUser.mutate({
-            token: getcookies,
-            payload: { data: datas },
-          });
+          LoginWith(getcookies, datas);
         }
       } else {
-        Cookiesget(getTokens, setErr, setErrmess);
-        alert(2);
+        await Cookiesget(getTokens, setErr, setErrmess);
+        const getcookies = Cookies.get('token');
+        LoginWith(getcookies, datas);
       }
     } catch (err: any) {
       return err;

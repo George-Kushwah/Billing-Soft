@@ -1,6 +1,7 @@
 import { connection } from './../server';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
+import Cryptojs from 'crypto-js';
 
 export const RegisterUsers = async (data: any, res: any) => {
   try {
@@ -57,17 +58,19 @@ export const LoginUser = async (data: any, res: any) => {
             result[0]?.password,
             (errs: any, results: any) => {
               if (results) {
+                let datas = Cryptojs.AES.encrypt(
+                  JSON.stringify({
+                    name: result[0]?.name,
+                    role: result[0]?.permission,
+                    id: result[0]?.id,
+                  }),
+                  `${process.env.REACT_APP_API_KEY}`,
+                ).toString();
                 res
                   .status(200)
                   .send({
                     error: false,
-                    data: [
-                      {
-                        name: result[0]?.name,
-                        role: result[0]?.permission,
-                        id: result[0]?.id,
-                      },
-                    ],
+                    data: datas,
                     status: 200,
                   })
                   .end();

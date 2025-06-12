@@ -4,7 +4,6 @@ import Customaxios from '../../Axios/Axios-Interface';
 const urls = Customaxios(process.env.REACT_APP_BACKADN_URL);
 
 const loginusers = async (ev: any): Promise<void> => {
-  console.log(ev);
   try {
     const headers: any = {
       Accept: 'application/json',
