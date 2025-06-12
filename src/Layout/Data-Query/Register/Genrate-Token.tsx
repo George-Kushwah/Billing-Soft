@@ -12,7 +12,7 @@ const GenrateNewToken = async (): Promise<void> => {
     const getToken = await urls
       .get('Genrate/Token')
       .then((res: any) => res)
-      .catch((err: any) => err.toJSON()?.message);
+      .catch((err: any) => err);
     return getToken;
   } catch (err: any) {
     return Promise.reject(err);
@@ -20,18 +20,21 @@ const GenrateNewToken = async (): Promise<void> => {
 };
 
 const registerUsers = async (ev: any): Promise<void> => {
-  const headers: any = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${ev.token?.data}`,
-  };
-  const users = await urls
-    .post('Register-User', ev?.payload, {
-      headers,
-    })
-    .then((res: any) => res)
-    .catch((err: any) => err.toJSON()?.message);
-  return users;
+  try {
+    const headers: any = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${ev.token?.data}`,
+    };
+    const users = await urls
+      .post('Register-User', ev?.payload, {
+        headers,
+      })
+      .then((res: any) => res);
+    return users;
+  } catch (err: any) {
+    return Promise.reject(err);
+  }
 };
 
 export function GetToken() {

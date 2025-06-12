@@ -24,7 +24,7 @@ app.use(bodyparser.json());
 app.use(express.static('./dist/'));
 app.use(
   cors({
-    origin: 'http://localhost:3001',
+    origin: '*',
     Credential: true,
   }),
 );
@@ -44,13 +44,13 @@ connection.connect(function (err: any) {
   console.log('Connected!');
 });
 app.use(Logger);
-
-app.get('/Genrate/Token', cache('59 minutes'), (req: any, res: any) => {
+//cache('0 minutes')
+app.get('/Genrate/Token', (req: any, res: any) => {
   if (req) {
     const Token: string = GenrateToken();
-    if (typeof Token === 'string') {
+    if (typeof Token == 'string') {
       res.status(200).send(Token).end();
-    }
+    } else res.status(400).send({ error: true, message: 'Bad Request' }).end();
   }
 });
 

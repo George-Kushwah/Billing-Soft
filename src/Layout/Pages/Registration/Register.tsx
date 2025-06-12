@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import {
   Grid,
   Typography,
@@ -47,6 +47,9 @@ interface IFromsdata {
 }
 
 const Register = ({ mopen, handleReg }: IRegprops) => {
+  const [err, setErr] = useState<boolean>(false);
+  const [errRegis, setErrRegis] = useState<boolean>(false);
+  const [errmess, setErrmess] = useState<string>('');
   const role: string[] = ['User', 'Admin'];
   const [getTokens]: any = useQueries({
     queries: [GetToken()],
@@ -86,13 +89,6 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
     else return true;
   };
 
-  React.useEffect(() => {
-    if (Mutation.isPending) {
-      reset();
-      handleReg();
-    }
-  }, [Mutation]);
-
   const onSubmit: SubmitHandler<IFromsdata> = async (data) => {
     try {
       let datas = Cryptojs.AES.encrypt(
@@ -111,9 +107,28 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
           secure: false,
           sameSite: 'Strict',
         });
-        Mutation.mutate({ token: check?.data, payload: { data: datas } });
+        Mutation.mutate(
+          {
+            token: check?.data,
+            payload: { data: datas },
+          },
+          {
+            onError: (err: any) => {
+              setErrRegis(true);
+              setErrmess(err?.message);
+              return err;
+            },
+          },
+        );
+      } else {
+        if (check?.data?.status >= 400 || check?.data?.message) {
+          setErr(true);
+          setErrmess(check?.data?.message);
+        }
       }
-    } catch {}
+    } catch (err: any) {
+      return err;
+    }
   };
 
   return (
@@ -127,314 +142,368 @@ const Register = ({ mopen, handleReg }: IRegprops) => {
       >
         <Fade in={mopen}>
           <Box className={'Reg-model'}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <Typography variant="h3">User Registration</Typography>
-                <Grid container alignItems={'center'} rowSpacing={1}>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">Name</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <TextField
-                      size="small"
-                      type="text"
-                      placeholder="Name Here"
-                      className="input-col"
-                      autoComplete="off"
-                      {...register('username', {
-                        required: true,
-                        minLength: 3,
-                      })}
-                      sx={{
-                        width: '95%',
-                        input: {
-                          color: '#000',
-                          fontSize: '14px;',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: errors?.username ? 'red' : '#000',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#999',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: errors?.username ? 'red' : '#000',
-                          },
-                        },
-                      }}
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment
-                              position="start"
-                              sx={{ color: '#666', fontSize: '10' }}
-                            >
-                              <PersonOutlineIcon />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    {errors?.username && (
-                      <p className="err-mes">Name is Required</p>
-                    )}
-                  </Grid>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">Mobile</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <TextField
-                      size="small"
-                      placeholder="Mobile Number"
-                      className="input-col"
-                      autoComplete="off"
-                      {...register('mobile', {
-                        required: true,
-                        maxLength: 10,
-                        minLength: 10,
-                      })}
-                      sx={{
-                        width: '95%',
-                        input: {
-                          color: '#000',
-                          fontSize: '14px;',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: errors?.mobile ? 'red' : '#000',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#999',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: errors?.mobile ? 'red' : '#000',
-                          },
-                        },
-                      }}
-                      slotProps={{
-                        htmlInput: {
-                          maxLength: 10,
-                          type: 'number',
-                          // pattern: '[0-9]*',
-                        },
-                        input: {
-                          startAdornment: (
-                            <InputAdornment
-                              position="start"
-                              sx={{ color: '#666' }}
-                            >
-                              <PhoneIcon />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    {errors?.mobile && (
-                      <p className="err-mes">
-                        Please Enter 10 Digit Mobile Number
-                      </p>
-                    )}
-                  </Grid>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">Password</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <TextField
-                      size="small"
-                      type="password"
-                      placeholder="Password"
-                      className="input-col"
-                      autoComplete="off"
-                      {...register('password', {
-                        required: true,
-                      })}
-                      sx={{
-                        width: '95%',
-                        input: {
-                          color: '#000',
-                          fontSize: '14px;',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: errors?.cnfpassword ? 'red' : '#000',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#999',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: errors?.cnfpassword ? 'red' : '#000',
-                          },
-                        },
-                      }}
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment
-                              position="start"
-                              sx={{ color: '#666' }}
-                            >
-                              <VpnKeyIcon />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">Confirm Password</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <TextField
-                      size="small"
-                      type="password"
-                      placeholder="Password Confirm"
-                      className="input-col"
-                      {...register('cnfpassword', {
-                        required: true,
-                        validate: (value: string) =>
-                          value === watch('password') || 'not match',
-                      })}
-                      sx={{
-                        width: '95%',
-                        input: {
-                          color: '#000',
-                          fontSize: '14px;',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: errors?.cnfpassword ? 'red' : '#000',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#999',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: errors?.cnfpassword ? 'red' : '#000',
-                          },
-                        },
-                      }}
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment
-                              position="start"
-                              sx={{ color: '#666' }}
-                            >
-                              <VpnKeyIcon />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    {errors?.cnfpassword && (
-                      <p className="err-mes">Password not Match</p>
-                    )}
-                  </Grid>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">DOB</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <Controller
-                      name="dob"
-                      control={control}
-                      rules={{
-                        required: 'Please select an option',
-                        validate: (val: Dayjs | null) => ValidateDate(val),
-                      }}
-                      render={({ field }) => (
-                        <DatePicker
+            {err ? (
+              <>
+                <div className="user-create-err">
+                  <p className="err-mes-user">User not Created</p>
+                  <span>{errmess}</span>
+                  <br />
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="warning"
+                    startIcon={<ArrowForwardIosIcon />}
+                    onClick={() => {
+                      setErr(false);
+                      setErrmess('');
+                      reset();
+                    }}
+                  >
+                    Retry
+                  </Button>
+                </div>
+              </>
+            ) : errRegis ? (
+              <>
+                <div className="user-create-err">
+                  <p className="err-mes-user">Error in User Registration</p>
+                  <span>{errmess}</span>
+                  <br />
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="warning"
+                    startIcon={<ArrowForwardIosIcon />}
+                    onClick={() => {
+                      setErrRegis(false);
+                      setErrmess('');
+                      reset();
+                    }}
+                  >
+                    Retry
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <Typography variant="h3">User Registration</Typography>
+                    <Grid container alignItems={'center'} rowSpacing={1}>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">Name</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <TextField
+                          size="small"
+                          type="text"
+                          placeholder="Name Here"
+                          className="input-col"
+                          autoComplete="off"
+                          {...register('username', {
+                            required: true,
+                            minLength: 3,
+                          })}
                           sx={{
                             width: '95%',
+                            input: {
+                              color: '#000',
+                              fontSize: '14px;',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: errors?.username ? 'red' : '#000',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#999',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: errors?.username ? 'red' : '#000',
+                              },
+                            },
                           }}
-                          label="Select Date"
-                          className={errors?.dob ? 'err-bor' : ''}
-                          {...field}
-                          minDate={dayjs().subtract(35, 'year')}
-                          maxDate={dayjs().subtract(0, 'day')}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment
+                                  position="start"
+                                  sx={{ color: '#666', fontSize: '10' }}
+                                >
+                                  <PersonOutlineIcon />
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
                         />
-                      )}
-                    ></Controller>
-                    {errors?.dob && (
-                      <p className="err-mes">Please select DOB 18+</p>
-                    )}
-                  </Grid>
-                  <Grid size={{ lg: 4 }}>
-                    <Typography variant="h6">Role</Typography>
-                  </Grid>
-                  <Grid size={{ lg: 8 }}>
-                    <Controller
-                      name="role"
-                      control={control}
-                      rules={{
-                        required: true,
-                        validate: (val: boolean | string): boolean =>
-                          HandleRole(val),
-                      }}
-                      render={({ field }) => (
-                        <FormControl
-                          fullWidth
-                          sx={{ width: '95%' }}
-                          variant="outlined"
-                        >
-                          <InputLabel id=""> Role</InputLabel>
-                          <Select
-                            {...field}
-                            className={errors?.dob ? 'err-bor' : ''}
-                          >
-                            {role.map((item: string, ind: number) => (
-                              <MenuItem
-                                key={ind}
-                                value={item}
-                                sx={{
-                                  '&:hover': {
-                                    color: '#000',
-                                  },
-                                }}
+                        {errors?.username && (
+                          <p className="err-mes">Name is Required</p>
+                        )}
+                      </Grid>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">Mobile</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <TextField
+                          size="small"
+                          placeholder="Mobile Number"
+                          className="input-col"
+                          autoComplete="off"
+                          {...register('mobile', {
+                            required: true,
+                            maxLength: 10,
+                            minLength: 10,
+                          })}
+                          sx={{
+                            width: '95%',
+                            input: {
+                              color: '#000',
+                              fontSize: '14px;',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: errors?.mobile ? 'red' : '#000',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#999',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: errors?.mobile ? 'red' : '#000',
+                              },
+                            },
+                          }}
+                          slotProps={{
+                            htmlInput: {
+                              maxLength: 10,
+                              type: 'number',
+                              // pattern: '[0-9]*',
+                            },
+                            input: {
+                              startAdornment: (
+                                <InputAdornment
+                                  position="start"
+                                  sx={{ color: '#666' }}
+                                >
+                                  <PhoneIcon />
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                        {errors?.mobile && (
+                          <p className="err-mes">
+                            Please Enter 10 Digit Mobile Number
+                          </p>
+                        )}
+                      </Grid>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">Password</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <TextField
+                          size="small"
+                          type="password"
+                          placeholder="Password"
+                          className="input-col"
+                          autoComplete="off"
+                          {...register('password', {
+                            required: true,
+                          })}
+                          sx={{
+                            width: '95%',
+                            input: {
+                              color: '#000',
+                              fontSize: '14px;',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: errors?.cnfpassword
+                                  ? 'red'
+                                  : '#000',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#999',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: errors?.cnfpassword
+                                  ? 'red'
+                                  : '#000',
+                              },
+                            },
+                          }}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment
+                                  position="start"
+                                  sx={{ color: '#666' }}
+                                >
+                                  <VpnKeyIcon />
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">Confirm Password</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <TextField
+                          size="small"
+                          type="password"
+                          placeholder="Password Confirm"
+                          className="input-col"
+                          {...register('cnfpassword', {
+                            required: true,
+                            validate: (value: string) =>
+                              value === watch('password') || 'not match',
+                          })}
+                          sx={{
+                            width: '95%',
+                            input: {
+                              color: '#000',
+                              fontSize: '14px;',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: errors?.cnfpassword
+                                  ? 'red'
+                                  : '#000',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#999',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: errors?.cnfpassword
+                                  ? 'red'
+                                  : '#000',
+                              },
+                            },
+                          }}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment
+                                  position="start"
+                                  sx={{ color: '#666' }}
+                                >
+                                  <VpnKeyIcon />
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                        {errors?.cnfpassword && (
+                          <p className="err-mes">Password not Match</p>
+                        )}
+                      </Grid>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">DOB</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <Controller
+                          name="dob"
+                          control={control}
+                          rules={{
+                            required: 'Please select an option',
+                            validate: (val: Dayjs | null) => ValidateDate(val),
+                          }}
+                          render={({ field }) => (
+                            <DatePicker
+                              sx={{
+                                width: '95%',
+                              }}
+                              label="Select Date"
+                              className={errors?.dob ? 'err-bor' : ''}
+                              {...field}
+                              minDate={dayjs().subtract(35, 'year')}
+                              maxDate={dayjs().subtract(0, 'day')}
+                            />
+                          )}
+                        ></Controller>
+                        {errors?.dob && (
+                          <p className="err-mes">Please select DOB 18+</p>
+                        )}
+                      </Grid>
+                      <Grid size={{ lg: 4 }}>
+                        <Typography variant="h6">Role</Typography>
+                      </Grid>
+                      <Grid size={{ lg: 8 }}>
+                        <Controller
+                          name="role"
+                          control={control}
+                          rules={{
+                            required: true,
+                            validate: (val: boolean | string): boolean =>
+                              HandleRole(val),
+                          }}
+                          render={({ field }) => (
+                            <FormControl
+                              fullWidth
+                              sx={{ width: '95%' }}
+                              variant="outlined"
+                            >
+                              <InputLabel id=""> Role</InputLabel>
+                              <Select
+                                {...field}
+                                className={errors?.dob ? 'err-bor' : ''}
                               >
-                                {item}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                    ></Controller>
-                    {errors?.role && (
-                      <p className="err-mes">Please select User Role</p>
-                    )}
-                  </Grid>
-                  <Grid size={{ lg: 4 }}></Grid>
-                  <Grid size={{ lg: 6 }}>
-                    {Mutation.isPending ? (
-                      <p className="user_create">User Created</p>
-                    ) : (
-                      ''
-                    )}
-                    <Button
-                      sx={{ mt: 2 }}
-                      variant="contained"
-                      type="submit"
-                      startIcon={<ArrowForwardIosIcon />}
-                      disabled={Mutation?.isPending}
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      type="reset"
-                      sx={{ mt: 2 }}
-                      variant="contained"
-                      color="error"
-                      startIcon={<ClearIcon />}
-                      onClick={() => {
-                        handleReg();
-                        reset();
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </Grid>
-                </Grid>
-              </form>
-            </LocalizationProvider>
+                                {role.map((item: string, ind: number) => (
+                                  <MenuItem
+                                    key={ind}
+                                    value={item}
+                                    sx={{
+                                      '&:hover': {
+                                        color: '#000',
+                                      },
+                                    }}
+                                  >
+                                    {item}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                        ></Controller>
+                        {errors?.role && (
+                          <p className="err-mes">Please select User Role</p>
+                        )}
+                      </Grid>
+                      <Grid size={{ lg: 4 }}></Grid>
+                      <Grid size={{ lg: 6 }}>
+                        {Mutation.isPending ? (
+                          <p className="user_create">User Created</p>
+                        ) : (
+                          ''
+                        )}
+                        <Button
+                          sx={{ mt: 2 }}
+                          variant="contained"
+                          type="submit"
+                          startIcon={<ArrowForwardIosIcon />}
+                          disabled={Mutation?.isPending}
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          type="reset"
+                          sx={{ mt: 2 }}
+                          variant="contained"
+                          color="error"
+                          startIcon={<ClearIcon />}
+                          onClick={() => {
+                            handleReg();
+                            reset();
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </form>
+                </LocalizationProvider>
+              </>
+            )}
           </Box>
         </Fade>
       </Modal>

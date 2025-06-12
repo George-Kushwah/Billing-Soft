@@ -90,6 +90,17 @@ body {
     font-size: 12px;
     padding: 03px 0;
   }
+  .user-create-err {
+    .err-mes-user {
+      color: red;
+      margin: 0;
+      font-size: 18px;
+      padding: 03px 0;
+      font-weight: 500;
+      margin: 0 0 10px 0;
+    }
+    text-align: center;
+  }
   .err-bor {
     border: 1px red solid;
     @include bor(7px);
