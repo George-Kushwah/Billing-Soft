@@ -12,7 +12,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ProtectRoute from './Layout/Pages/Protecttion/Protect-Route';
 const Index = React.lazy(() => import('./Layout/Pages/Login/Index'));
 const Dashboard = React.lazy(() => import('./Layout/Pages/Dashboard/Index'));
-
+const Profile = React.lazy(
+  () => import('./Layout/Pages/Dashboard/Profile/Profile'),
+);
 const CustomErrorPage = React.lazy(() => import('./Layout/Custom-Error/Error'));
 
 const rootEl = document.getElementById('root');
@@ -25,6 +27,7 @@ if (rootEl) {
         <Route path="/Login" element={<Index />} />
         <Route path="/" element={<ProtectRoute />}>
           <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/Settings/:pages" element={<Profile />} />
         </Route>
         <Route path="*" element={<CustomErrorPage />} />
       </Route>,

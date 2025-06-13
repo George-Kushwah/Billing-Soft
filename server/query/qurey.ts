@@ -63,6 +63,8 @@ export const LoginUser = async (data: any, res: any) => {
                     name: result[0]?.name,
                     role: result[0]?.permission,
                     id: result[0]?.id,
+                    mobile: result[0]?.mobile,
+                    dob: result[0]?.age,
                     succ: true,
                     error: false,
                   }),

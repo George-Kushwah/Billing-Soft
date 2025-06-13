@@ -11,13 +11,11 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-function Header() {
+const Header = () => {
   const pages: string[] = ['New Product', 'Search Product', 'Contact'];
   const settings: string[] = ['Profile', 'Logout'];
-  const navigate: any = useNavigate();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -29,14 +27,6 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-  };
-  const CickMenu = (ev: number) => {
-    const val: string = settings[ev];
-    if (val === 'Logout') {
-      Cookies.remove('login');
-      Cookies.remove('token');
-      navigate('/Login');
-    }
   };
   return (
     <>
@@ -127,9 +117,7 @@ function Header() {
               >
                 {settings.map((setting: string, ind: any) => (
                   <MenuItem key={ind} onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: 'center' }}>
-                      <span onClick={() => CickMenu(ind)}> {setting}</span>
-                    </Typography>
+                    <NavLink to={`Settings/${setting}`}> {setting}</NavLink>
                   </MenuItem>
                 ))}
               </Menu>
@@ -139,6 +127,6 @@ function Header() {
       </AppBar>
     </>
   );
-}
+};
 
 export default Header;
