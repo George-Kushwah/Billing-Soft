@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Cryptojs from 'crypto-js';
 import { jwtDecode } from 'jwt-decode';
+const Header = React.lazy(
+  () => import('./../../Pages/Dashboard/Header/Header'),
+);
 
 const ProtectRoute = () => {
   const checkuser = () => {
@@ -37,7 +40,16 @@ const ProtectRoute = () => {
     }
   };
 
-  return checkuser() ? <Outlet /> : <Navigate to="/login" />;
+  return checkuser() ? (
+    <>
+      <Header />
+      <Suspense fallback={<>Loading</>}>
+        <Outlet />
+      </Suspense>
+    </>
+  ) : (
+    <Navigate to="/login" />
+  );
 };
 
 export default ProtectRoute;
