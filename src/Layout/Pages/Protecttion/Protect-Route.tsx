@@ -3,6 +3,8 @@ import { Outlet, Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Cryptojs from 'crypto-js';
 import { jwtDecode } from 'jwt-decode';
+import { CustomErrorfun } from './../../Custom-Error/useErrorhook';
+import { ErrorBoundary } from 'react-error-boundary';
 const Header = React.lazy(
   () => import('./../../Pages/Dashboard/Header/Header'),
 );
@@ -44,7 +46,9 @@ const ProtectRoute = () => {
     <>
       <Header />
       <Suspense fallback={<>Loading</>}>
-        <Outlet />
+        <ErrorBoundary FallbackComponent={CustomErrorfun}>
+          <Outlet />
+        </ErrorBoundary>
       </Suspense>
     </>
   ) : (
