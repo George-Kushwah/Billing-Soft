@@ -14,7 +14,7 @@ const loginusers = async (ev: any): Promise<void> => {
       .post('Login-User', ev?.payload, {
         headers,
       })
-      .then((res: any) => res);
+      .then((res: any) => res?.data);
     return login;
   } catch (err: any) {
     return Promise.reject(err);

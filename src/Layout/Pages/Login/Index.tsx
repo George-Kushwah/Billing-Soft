@@ -19,8 +19,9 @@ import Cookies from 'js-cookie';
 import { useQueries } from '@tanstack/react-query';
 import { GetToken } from './../../Data-Query/Register/Genrate-Token';
 import { Cookiesget } from './../../Custom-Elements/Buttonclick';
-import { LoginUser } from './../../Data-Query/Login/Login-user';
+import { LoginUser } from './../../Data-Query/Login/Login-User';
 import ClearIcon from '@mui/icons-material/Clear';
+import { useNavigate } from 'react-router-dom';
 const Registration = React.lazy(() => import('./../Registration/Register'));
 
 interface ILoginProps {
@@ -40,6 +41,8 @@ const Index = () => {
   const HandleCloseRegistration = useCallback(() => {
     setMopen(false);
   }, [Mopen]);
+
+  const Navigate: any = useNavigate();
 
   const {
     register,
@@ -63,7 +66,18 @@ const Index = () => {
         onSuccess: (data: any) => {
           setLoginerr(false);
           setErrmess('');
-          console.log(data, 'data');
+          if (!data?.error && data?.data !== '' && data?.status === 200) {
+            Cookies.set('login', `${data?.data}`, {
+              expires: 1,
+              path: '/',
+              secure: false,
+              sameSite: 'Strict',
+            });
+            setTimeout(() => Navigate('/Dashboard'), 800);
+          } else {
+            setLoginerr(true);
+            setErrmess('Unable to Login');
+          }
         },
         onError: (err: any) => {
           setLoginerr(true);

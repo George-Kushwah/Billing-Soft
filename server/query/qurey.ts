@@ -63,6 +63,8 @@ export const LoginUser = async (data: any, res: any) => {
                     name: result[0]?.name,
                     role: result[0]?.permission,
                     id: result[0]?.id,
+                    succ: true,
+                    error: false,
                   }),
                   `${process.env.REACT_APP_API_KEY}`,
                 ).toString();
