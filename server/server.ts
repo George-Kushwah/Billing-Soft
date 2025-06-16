@@ -45,7 +45,7 @@ connection.connect(function (err: any) {
 });
 app.use(Logger);
 //cache('0 minutes')
-app.get('/Genrate/Token', (req: any, res: any) => {
+app.get('/Genrate/Token', cache('50 minutes'), (req: any, res: any) => {
   if (req) {
     const Token: string = GenrateToken();
     if (typeof Token === 'string') {
