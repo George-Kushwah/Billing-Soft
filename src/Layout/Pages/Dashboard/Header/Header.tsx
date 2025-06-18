@@ -116,7 +116,11 @@ const Header = () => {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting: string, ind: any) => (
-                  <MenuItem key={ind} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={ind}
+                    onClick={handleCloseUserMenu}
+                    className="nav-item-profile"
+                  >
                     <NavLink to={`Settings/${setting}`}> {setting}</NavLink>
                   </MenuItem>
                 ))}

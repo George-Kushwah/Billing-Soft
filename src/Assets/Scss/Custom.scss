@@ -145,3 +145,18 @@ body {
     margin: 0;
   }
 }
+
+.profile {
+  width: 1200px;
+  margin: 0px auto;
+  padding: 40px 10px 10px 10px;
+}
+.nav-item-profile {
+  a {
+    color: $col1;
+    text-decoration: none;
+    &:hover {
+      color: #2a61b5;
+    }
+  }
+}
