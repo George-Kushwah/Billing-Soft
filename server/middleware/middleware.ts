@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import logger from './../loging/logs';
 dotenv.config();
 export const Authcheck = (req: any, res: any, next: any) => {
   const authHeader = req.headers['authorization'];
@@ -37,6 +38,12 @@ export const ErrorHandler = (
 };
 
 export const Logger = (req: any, res: any, next: any) => {
-  //console.log('res');
+  const { method, url } = req;
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const logMessage = `${method} ${url} ${res.statusCode} - ${duration}ms`;
+    logger.info(logMessage);
+  });
   next();
 };
