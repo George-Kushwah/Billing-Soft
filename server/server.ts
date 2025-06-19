@@ -45,12 +45,17 @@ connection.connect(function (err: any) {
 });
 app.use(Logger);
 //cache('0 minutes')
-app.get('/Genrate/Token', cache('50 minutes'), (req: any, res: any) => {
-  if (req) {
-    const Token: string = GenrateToken();
-    if (typeof Token === 'string') {
-      res.status(200).send(Token).end();
-    } else res.status(400).send({ error: true, message: 'Bad Request' }).end();
+app.get('/Genrate/Token', cache('50 minutes'), async (req: any, res: any) => {
+  try {
+    if (req) {
+      const Token: string = GenrateToken();
+      if (typeof Token === 'string') {
+        res.status(200).send(Token).end();
+      } else
+        res.status(400).send({ error: true, message: 'Bad Request' }).end();
+    }
+  } catch {
+    res.status(400).send({ error: true, message: 'Bad Request' }).end();
   }
 });
 
