@@ -15,9 +15,11 @@ const logger = createLogger({
     format.printf(({ timestamp, level, message, stack }) => {
       return `[${timestamp}] ${level.toUpperCase()}: ${stack || message}`;
     }),
+    format.json(),
+    format.prettyPrint(),
   ),
   transports: [
-    new transports.Console(),
+    //new transports.Console(),
     new transports.File({ filename: combinedLog }),
     new transports.File({ filename: errorLog, level: 'error' }),
   ],

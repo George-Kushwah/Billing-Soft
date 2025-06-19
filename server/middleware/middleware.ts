@@ -17,6 +17,11 @@ export const Authcheck = (req: any, res: any, next: any) => {
       else next();
     }) as JwtPayload;
   } catch (err) {
+    const error: any = {
+      errcode: 500,
+      message: 'Invalid or Expired Token',
+    };
+    logger.error('error');
     return res.status(500).json({ message: 'Server Internal Error' });
   }
 };
@@ -34,6 +39,11 @@ export const ErrorHandler = (
     message: message,
     //stack: process.env.NODE_ENV === 'production' ? undefined : err.stack,
   });
+  const error: any = {
+    errcode: err.statusCode,
+    message: err.message,
+  };
+  logger.error('error', error);
   next();
 };
 
@@ -43,7 +53,13 @@ export const Logger = (req: any, res: any, next: any) => {
   res.on('finish', () => {
     const duration = Date.now() - start;
     const logMessage = `${method} ${url} ${res.statusCode} - ${duration}ms`;
-    logger.info(logMessage);
+    const datas: any = {
+      url: url,
+      method: method,
+      code: res?.statusCode,
+      data: req.body,
+    };
+    logger.info(logMessage, datas);
   });
   next();
 };

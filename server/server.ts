@@ -9,6 +9,7 @@ import apicache from 'apicache';
 import { GenrateToken } from './jwt/jwt';
 import { ErrorHandler, Authcheck, Logger } from './middleware/middleware';
 import { RegisterUsers, LoginUser } from './query/qurey';
+import logger from './loging/logs';
 
 dotenv.config();
 const port = 4500;
@@ -70,7 +71,7 @@ app.post('/Register-User', Authcheck, async (req: any, res: any) => {
   }
 });
 
-app.post('/Login-User', Authcheck, async (req: any, res: any) => {
+app.post('/Login-Usersd', Authcheck, async (req: any, res: any) => {
   if (req) {
     const setcheck: any = Cryptojs.AES.decrypt(
       req?.body?.data,
@@ -82,6 +83,11 @@ app.post('/Login-User', Authcheck, async (req: any, res: any) => {
 });
 
 app.use((req: any, res: any, next: any) => {
+  const error: any = {
+    errcode: 404,
+    message: 'Route not found',
+  };
+  logger.error('error', error);
   res.status(404).json({ message: 'Route not found' });
 });
 
