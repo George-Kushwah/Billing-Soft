@@ -13,15 +13,21 @@ export const Authcheck = (req: any, res: any, next: any) => {
   const token = authHeader.split(' ')[1];
   try {
     jwt.verify(token, process.env.REACT_APP_JWT_KEY, (err: any) => {
-      if (err) res.status(403).json({ message: 'Invalid or Expired Token' });
-      else next();
+      if (err) {
+        const error: any = {
+          errcode: 500,
+          message: 'Invalid or Expired Token',
+        };
+        logger.error('error', error);
+        res.status(403).json({ message: 'Invalid or Expired Token' });
+      } else next();
     }) as JwtPayload;
   } catch (err) {
     const error: any = {
       errcode: 500,
-      message: 'Invalid or Expired Token',
+      message: 'Server Internal Error',
     };
-    logger.error('error');
+    logger.error('error', error);
     return res.status(500).json({ message: 'Server Internal Error' });
   }
 };

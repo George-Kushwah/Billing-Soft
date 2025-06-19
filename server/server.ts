@@ -71,7 +71,7 @@ app.post('/Register-User', Authcheck, async (req: any, res: any) => {
   }
 });
 
-app.post('/Login-Usersd', Authcheck, async (req: any, res: any) => {
+app.post('/Login-User', Authcheck, async (req: any, res: any) => {
   if (req) {
     const setcheck: any = Cryptojs.AES.decrypt(
       req?.body?.data,
